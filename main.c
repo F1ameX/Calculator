@@ -23,43 +23,14 @@ char* get_string(int* len)
 }
 
 
-int main() {
-    int value;
-    STACK* stack, *ptr;
-    stack = init();
-
-    for(int i = 0; i < 3; i++)
+int main()
+{
+    int len, iterator = 0;
+    char* expression;
+    expression = get_string(&len);
+    while (iterator < len)
     {
-        scanf("%d", &value);
-        push(stack, value);
+        putchar(expression[iterator]);
+        iterator++;
     }
-
-    print(stack);
-    return 0;
 }
-
-/*
- * int find_key(STACK* stack, int key)
- * {
- *      STACK* current = stack->next;
- *      while(stack->next)
- *          if(current->key == key)
- *              return current->key;
- *          current = current->next;
- *      return 0;
- * }
- *
- *
- * int list_len(STACK* stack)
- * {
- *      int len = 0;
- *      STACK* current = stack->next;
- *      while (current->next)
- *          len++;
- *           current = current->next;
- *     return len;
- *  }
- *
- *
- *  
- */

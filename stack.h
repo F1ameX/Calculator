@@ -1,41 +1,42 @@
 #ifndef CALCULATOR_STACK_H
 #define CALCULATOR_STACK_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#define STACK struct stack
+#define STACK_INT struct stack_int
 
 
-STACK
+STACK_INT
 {
     int value;
-    STACK* next;
+    STACK_INT* next;
 };
 
 
-STACK* init()
+STACK_INT* init()
 {
-    STACK* terminal_element;
-    terminal_element = (STACK*)malloc(sizeof(STACK));
+    STACK_INT* terminal_element;
+    terminal_element = (STACK_INT*)malloc(sizeof(STACK_INT));
     terminal_element->value = 0;
     terminal_element->next = NULL;
     return terminal_element;
 }
 
 
-void push(STACK* stack, int value)
+void push(STACK_INT* stack, int value)
 {
-    STACK* head = stack->next;
-    STACK* element;
-    element = (STACK*)malloc(sizeof(STACK));
+    STACK_INT* head = stack->next;
+    STACK_INT* element;
+    element = (STACK_INT*)malloc(sizeof(STACK_INT));
     element->value = value;
     element->next = head;
     stack->next = element;
 }
 
 
-int is_empty(STACK* stack)
+int is_empty(STACK_INT* stack)
 {
     if (stack->next != NULL)
         return 0;
@@ -43,9 +44,9 @@ int is_empty(STACK* stack)
 }
 
 
-void pop(STACK* stack)
+void pop(STACK_INT* stack)
 {
-    STACK* deleted = stack->next;
+    STACK_INT* deleted = stack->next;
     if (!is_empty(stack))
     {
         stack->next = deleted->next;
@@ -54,31 +55,29 @@ void pop(STACK* stack)
 }
 
 
-int get(STACK* stack)
+int get(STACK_INT* stack)
 {
-    STACK* head = stack->next;
+    STACK_INT* head = stack->next;
     return head->value;
 }
 
 
-int get_pop(STACK* stack)
+int get_pop(STACK_INT* stack)
 {
-    STACK* head = stack->next;
+    STACK_INT* head = stack->next;
     int to_pop = head->value;
     pop(stack);
     return to_pop;
 }
 
 
-void print_list(STACK* stack)
+void print_list(STACK_INT* stack)
 {
-    STACK* ptr = stack->next;
+    STACK_INT* ptr = stack->next;
     while (ptr != NULL)
     {
         printf("%d ", ptr->value);
         ptr = ptr->next;
     }
 }
-
-
 #endif //CALCULATOR_STACK_H
