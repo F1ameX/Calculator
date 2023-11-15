@@ -14,75 +14,63 @@ STACK
 };
 
 
-STACK* create(int value)
+STACK* init()
 {
-    STACK* element;
-    element = (STACK*)malloc(sizeof(STACK));
-    element->value = value;
-    element->next = NULL;
-    return element;
+    STACK* terminal_element;
+    terminal_element = (STACK*)malloc(sizeof(STACK));
+    terminal_element->value = 0;
+    terminal_element->next = NULL;
+    return terminal_element;
 }
 
 
-void push(STACK* stack, STACK* element)
+void push(STACK* stack, int value)
 {
-    STACK* start = stack->next;
-    element->next = start;
+    STACK* head = stack->next;
+    STACK* element;
+    element = (STACK*)malloc(sizeof(STACK));
+    element->value = value;
+    element->next = head;
     stack->next = element;
 }
 
 
 int is_empty(STACK* stack)
 {
-    if (stack->next)
+    if (stack->next != NULL)
         return 0;
     return 1;
 }
 
 
-int pop(STACK* stack)
+void pop(STACK* stack)
 {
-
+    STACK* deleted = stack->next;
     if (!is_empty(stack))
     {
-        STACK* old = stack->next;
-        stack->next = old->next;
-        int r = old->value;
-        free(old);
-        return r;
-    }
-    return 0;
-}
-
-
-void delete(STACK* prev)
-{
-    STACK* deleted = prev ->next;
-    if (deleted)
-    {
-        prev->next = deleted->next;
+        stack->next = deleted->next;
         free(deleted);
     }
 }
 
 
-void insert(STACK* prev, STACK *ptr)
+int get(STACK* stack)
 {
-    ptr->next = prev->next;
-    prev->next = ptr;
+    STACK* head = stack->next;
+    return head->value;
 }
 
 
-STACK* last_element(STACK* stack)
+int get_pop(STACK* stack)
 {
-    STACK* ptr = stack->next;
-    while (ptr->next != NULL)
-        ptr = ptr->next;
-    return ptr;
+    STACK* head = stack->next;
+    int to_pop = head->value;
+    pop(stack);
+    return to_pop;
 }
 
 
-void print(STACK* stack)
+void print_list(STACK* stack)
 {
     STACK* ptr = stack->next;
     while (ptr != NULL)

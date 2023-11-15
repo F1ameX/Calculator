@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "stack.h"
 
+
 char* get_string(int* len)
 {
     int capacity = 1;
@@ -24,19 +25,15 @@ char* get_string(int* len)
 
 int main() {
     int value;
-    STACK* stack;
+    STACK* stack, *ptr;
+    stack = init();
 
-    stack = create(0);
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < 3; i++)
     {
         scanf("%d", &value);
-        STACK* ptr;
-        ptr = create(value);
-        push(stack, ptr);
+        push(stack, value);
     }
-    STACK* current = create(10);
-    STACK* last = last_element(stack);
-    insert(last, current);
+
     print(stack);
     return 0;
 }
