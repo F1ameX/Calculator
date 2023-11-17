@@ -73,8 +73,8 @@ char get_pop(STACK* stack)
 
 void clear(STACK* stack)
 {
-    while (stack)
-        pop(stack);
+    while (stack->next)
+        pop(stack->next);
 }
 
 

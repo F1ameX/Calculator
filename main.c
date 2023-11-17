@@ -39,22 +39,24 @@ int operand_priority(char symbol)
 char* to_postfix(char* infix_expression, int len)
 {
     int postfix_iterator = 0, priority;
-    char* postfix_expression = (char *)malloc(sizeof(char) * len), symbol;
-    STACK* operator_stack;
-    operator_stack = init();
+    char* postfix_expression = (char *)malloc(sizeof(char) * len * 2), symbol;
+    STACK* operator_stack = init();
 
     for (int i = 0; i < len; i++)
     {
-        if (isnumber(infix_expression[i]))
+        if (isdigit(infix_expression[i]))
             postfix_expression[postfix_iterator++] = infix_expression[i];
+
         else if (is_operand(infix_expression[i]))
         {
+            postfix_expression[postfix_iterator++] = ' ';
             if (is_empty(operator_stack))
                 push(operator_stack, infix_expression[i]);
             else
             {
                 if (infix_expression[i] == '(')
                     push(operator_stack, infix_expression[i]);
+
                 else if (infix_expression[i] == ')')
                 {
                     symbol = get_pop(operator_stack);
@@ -64,6 +66,7 @@ char* to_postfix(char* infix_expression, int len)
                         symbol = get_pop(operator_stack);
                     }
                 }
+
                 else
                 {
                     priority = operand_priority(infix_expression[i]);
@@ -116,6 +119,13 @@ int main() {
     char* expression, *test;
     expression = get_string(&len);
     test = to_postfix(expression, len);
-    printf("%s", test);
+
+    if (test[0] == 'X')
+    {
+        puts("syntax error");
+        return 0;
+    }
+
+    puts(test);
     return 0;
 }
