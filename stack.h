@@ -10,7 +10,7 @@
 
 STACK
 {
-    int value;
+    char value;
     STACK* next;
 };
 
@@ -25,7 +25,7 @@ STACK* init()
 }
 
 
-void push(STACK* stack, int value)
+void push(STACK* stack, char value)
 {
     STACK* head = stack->next;
     STACK* element;
@@ -55,19 +55,26 @@ void pop(STACK* stack)
 }
 
 
-int get(STACK* stack)
+char get(STACK* stack)
 {
     STACK* head = stack->next;
     return head->value;
 }
 
 
-int get_pop(STACK* stack)
+char get_pop(STACK* stack)
 {
     STACK* head = stack->next;
-    int to_pop = head->value;
+    char to_pop = head->value;
     pop(stack);
     return to_pop;
+}
+
+
+void clear(STACK* stack)
+{
+    while (stack)
+        pop(stack);
 }
 
 
