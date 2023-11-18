@@ -61,7 +61,6 @@ char get(STACK* stack)
     return head->value;
 }
 
-
 char get_pop(STACK* stack)
 {
     STACK* head = stack->next;
