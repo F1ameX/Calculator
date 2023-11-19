@@ -10,7 +10,7 @@
 
 STACK
 {
-    char value;
+    int value;
     STACK* next;
 };
 
@@ -25,7 +25,7 @@ STACK* init()
 }
 
 
-void push(STACK* stack, char value)
+void push(STACK* stack, int value)
 {
     STACK* head = stack->next;
     STACK* element;
@@ -55,16 +55,17 @@ void pop(STACK* stack)
 }
 
 
-char get(STACK* stack)
+int get(STACK* stack)
 {
     STACK* head = stack->next;
     return head->value;
 }
 
-char get_pop(STACK* stack)
+
+int get_pop(STACK* stack)
 {
     STACK* head = stack->next;
-    char to_pop = head->value;
+    int to_pop = head->value;
     pop(stack);
     return to_pop;
 }
@@ -76,14 +77,4 @@ void clear(STACK* stack)
         pop(stack->next);
 }
 
-
-void print_list(STACK* stack)
-{
-    STACK* ptr = stack->next;
-    while (ptr != NULL)
-    {
-        printf("%d ", ptr->value);
-        ptr = ptr->next;
-    }
-}
 #endif //CALCULATOR_STACK_H
