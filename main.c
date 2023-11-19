@@ -118,26 +118,25 @@ char* to_postfix(char* infix_expression, int len)
 
 int calculator(char* postfix_expression)
 {
-    int result = 0, operand_1, operand_2, num = 0,  iterator = 0, len = strlen(postfix_expression);
+    int result = 0, operand_1, operand_2, num,  iterator = 0;
     STACK* calculator_stack = init();
 
-    while (iterator < len)
+    while (iterator < strlen(postfix_expression))
     {
         if (postfix_expression[iterator] == ' ')
             iterator++;
 
-        else if (isdigit(postfix_expression[iterator]))
+        if (isdigit(postfix_expression[iterator]))
         {
+            num = 0;
             while (postfix_expression[iterator] != ' ' && !is_operand(postfix_expression[iterator]))
             {
-                num = num * 10 + (postfix_expression[iterator++] - '0');
+                num = num * 10 + postfix_expression[iterator] - '0';
                 iterator++;
             }
-            iterator++;
             push(calculator_stack, (char)num);
-            num = 0;
         }
-        else if (is_operand(postfix_expression[iterator]))
+        else
         {
             operand_2 = (int)get_pop(calculator_stack);
             operand_1 = (int)get_pop(calculator_stack);
@@ -153,14 +152,15 @@ int calculator(char* postfix_expression)
                     result = operand_1 * operand_2;
                     break;
                 case '/':
-                    result = operand_1 / operand_2;
+                    result = operand_1 * operand_2;
                     break;
             }
+
             push(calculator_stack, (char)result);
             iterator++;
         }
     }
-    return (int)get(calculator_stack);
+    return 1;
 }
 
 
@@ -176,6 +176,6 @@ int main() {
         return 0;
     }
     puts(postfix_expression);
-    printf("%d", calculator(postfix_expression));
+    calculator(postfix_expression);
     return 0;
 }
