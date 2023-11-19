@@ -7,7 +7,7 @@
 
 int is_operand(char symbol)
 {
-    switch(symbol)
+    switch (symbol)
         case '+':
         case '-':
         case '*':
@@ -21,7 +21,7 @@ int is_operand(char symbol)
 
 int operand_priority(char symbol)
 {
-    switch(symbol)
+    switch (symbol)
     {
         case '*':
         case '/':
@@ -116,14 +116,14 @@ char* to_postfix(char* infix_expression, int len)
 }
 
 
-int calculator(char* postfix_expression)
+char calculator(char* postfix_expression)
 {
-    int result = 0, operand_1, operand_2, num,  iterator = 0;
+    int result, operand_1, operand_2, num, iterator = 0;
     STACK* calculator_stack = init();
 
     while (iterator < strlen(postfix_expression))
     {
-        if (postfix_expression[iterator] == ' ')
+        while (postfix_expression[iterator] == ' ')
             iterator++;
 
         if (isdigit(postfix_expression[iterator]))
@@ -138,6 +138,8 @@ int calculator(char* postfix_expression)
         }
         else
         {
+            if (is_empty(calculator_stack))
+                return 's';
             operand_2 = (int)get_pop(calculator_stack);
             operand_1 = (int)get_pop(calculator_stack);
             switch (postfix_expression[iterator])
@@ -152,15 +154,17 @@ int calculator(char* postfix_expression)
                     result = operand_1 * operand_2;
                     break;
                 case '/':
-                    result = operand_1 * operand_2;
+                    if (operand_2 == 0)
+                        return 'd';
+                    else
+                        result = operand_1 / operand_2;
                     break;
             }
-
             push(calculator_stack, (char)result);
             iterator++;
         }
     }
-    return 1;
+    return (char)result;
 }
 
 
@@ -176,6 +180,16 @@ int main() {
         return 0;
     }
     puts(postfix_expression);
-    calculator(postfix_expression);
-    return 0;
+    switch (calculator(postfix_expression))
+    {
+        case 's':
+            puts("syntax error");
+            return 0;
+        case 'd':
+            puts("division by zero");
+            return 0;
+        default:
+            printf("%d", calculator(postfix_expression));
+            return 0;
+    }
 }
