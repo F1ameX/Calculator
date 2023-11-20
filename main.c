@@ -5,19 +5,20 @@
 #include "stack.h"
 
 
+#define SYNTAX_ERROR (INT16_MAX + 1)
+#define DIV_BY_ZERO (INT16_MAX + 2)
+
+
 int is_operand(char symbol)
 {
     switch (symbol)
-    {
-        case '(':
-        case ')':
-            return 2;
         case '+':
         case '-':
         case '*':
         case '/':
+        case '(':
+        case ')':
             return 1;
-    }
     return 0;
 }
 
@@ -67,10 +68,6 @@ char* to_postfix(char* infix_expression, int len)
     char* postfix_expression = (char *)malloc(sizeof(char) * len * 2), symbol;
     STACK* operator_stack = init();
 
-    if (is_operand(infix_expression[0]) == 1 || is_operand(infix_expression[len - 1]) == 1)
-        return "X";
-
-
     for (int i = 0; i < len; i++)
     {
         if (isdigit(infix_expression[i]))
@@ -79,39 +76,36 @@ char* to_postfix(char* infix_expression, int len)
         else if (is_operand(infix_expression[i]))
         {
             postfix_expression[postfix_iterator++] = ' ';
-
-            if (is_empty(operator_stack) && infix_expression[i] == '(')
-                return "X";
-            else if (is_empty(operator_stack))
-                push(operator_stack, infix_expression[i]);
+            if (is_empty(operator_stack))
+                push(operator_stack, (int)infix_expression[i]);
             else
             {
                 if (infix_expression[i] == '(')
-                    push(operator_stack, infix_expression[i]);
+                    push(operator_stack, (int)infix_expression[i]);
 
                 else if (infix_expression[i] == ')')
                 {
-                    symbol = get_pop(operator_stack);
+                    symbol = (char)get_pop(operator_stack);
                     while (symbol != '(')
                     {
                         postfix_expression[postfix_iterator++] = symbol;
-                        symbol = get_pop(operator_stack);
+                        symbol = (char)get_pop(operator_stack);
                     }
                 }
 
                 else
                 {
                     priority = operand_priority(infix_expression[i]);
-                    symbol = get(operator_stack);
+                    symbol = (char)get(operator_stack);
                     while(operand_priority(symbol) >= priority)
                     {
                         postfix_expression[postfix_iterator++] = symbol;
                         pop(operator_stack);
                         if (is_empty(operator_stack))
                             break;
-                        symbol = get(operator_stack);
+                        symbol = (char)get(operator_stack);
                     }
-                    push(operator_stack, infix_expression[i]);
+                    push(operator_stack, (int)infix_expression[i]);
                 }
             }
         }
@@ -119,14 +113,14 @@ char* to_postfix(char* infix_expression, int len)
             return "X";
     }
     while (!is_empty(operator_stack))
-        postfix_expression[postfix_iterator++] = get_pop(operator_stack);
+        postfix_expression[postfix_iterator++] = (char)get_pop(operator_stack);
+
     postfix_expression[postfix_iterator] = '\0';
-    clear(operator_stack);
     return postfix_expression;
 }
 
 
-char calculator(char* postfix_expression)
+long int calculator(char* postfix_expression)
 {
     int result, operand_1, operand_2, num, iterator = 0;
     STACK* calculator_stack = init();
@@ -144,14 +138,14 @@ char calculator(char* postfix_expression)
                 num = num * 10 + postfix_expression[iterator] - '0';
                 iterator++;
             }
-            push(calculator_stack, (char)num);
+            push(calculator_stack, num);
         }
         else
         {
             if (is_empty(calculator_stack))
-                return 's';
-            operand_2 = (int)get_pop(calculator_stack);
-            operand_1 = (int)get_pop(calculator_stack);
+                return SYNTAX_ERROR;
+            operand_2 = get_pop(calculator_stack);
+            operand_1 = get_pop(calculator_stack);
             switch (postfix_expression[iterator])
             {
                 case '+':
@@ -165,22 +159,22 @@ char calculator(char* postfix_expression)
                     break;
                 case '/':
                     if (operand_2 == 0)
-                        return 'd';
+                        return DIV_BY_ZERO;
                     else
                         result = operand_1 / operand_2;
                     break;
             }
-            push(calculator_stack, (char)result);
+            push(calculator_stack, result);
             iterator++;
         }
     }
-    return (char)result;
+    return result;
 }
 
 
 int main() {
     int len;
-    char* expression, *postfix_expression, result;
+    char* expression, *postfix_expression;
     expression = get_string(&len);
     postfix_expression = to_postfix(expression, len);
 
@@ -189,17 +183,16 @@ int main() {
         puts("syntax error");
         return 0;
     }
-    result =  calculator(postfix_expression);
-    switch (result)
+    switch (calculator(postfix_expression))
     {
-        case 's':
+        case SYNTAX_ERROR:
             puts("syntax error");
             return 0;
-        case 'd':
+        case DIV_BY_ZERO:
             puts("division by zero");
             return 0;
         default:
-            printf("%d", (int)result);
+            printf("%ld", calculator(postfix_expression));
             return 0;
     }
 }
