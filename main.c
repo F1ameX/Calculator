@@ -12,13 +12,16 @@
 int is_operand(char symbol)
 {
     switch (symbol)
+    {
+        case '(':
+        case ')':
+            return 2;
         case '+':
         case '-':
         case '*':
         case '/':
-        case '(':
-        case ')':
             return 1;
+    }
     return 0;
 }
 
@@ -68,6 +71,9 @@ char* to_postfix(char* infix_expression, int len)
     char* postfix_expression = (char *)malloc(sizeof(char) * len * 2), symbol;
     STACK* operator_stack = init();
 
+    if (is_operand(infix_expression[0]) == 1 || is_operand(infix_expression[len - 1]) == 1)
+        return "X";
+
     for (int i = 0; i < len; i++)
     {
         if (isdigit(infix_expression[i]))
@@ -76,8 +82,10 @@ char* to_postfix(char* infix_expression, int len)
         else if (is_operand(infix_expression[i]))
         {
             postfix_expression[postfix_iterator++] = ' ';
-            if (is_empty(operator_stack))
-                push(operator_stack, (int)infix_expression[i]);
+            if (is_empty(operator_stack) && infix_expression[i] == '(')
+                return "X";
+            else if (is_empty(operator_stack))
+                push(operator_stack, infix_expression[i]);
             else
             {
                 if (infix_expression[i] == '(')
