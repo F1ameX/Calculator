@@ -14,6 +14,7 @@ int is_operand(char symbol)
     switch (symbol)
     {
         case '(':
+            return 3;
         case ')':
             return 2;
         case '+':
@@ -71,7 +72,7 @@ char* to_postfix(char* infix_expression, int len)
     char* postfix_expression = (char *)malloc(sizeof(char) * len * 2), symbol;
     STACK* operator_stack = init();
 
-    if (is_operand(infix_expression[0]) == 1 || is_operand(infix_expression[len - 1]) == 1)
+    if (operand_priority(infix_expression[0]) > 1 || is_operand(infix_expression[len - 1]) > 2)
         return "X";
 
     for (int i = 0; i < len; i++)
@@ -82,10 +83,13 @@ char* to_postfix(char* infix_expression, int len)
         else if (is_operand(infix_expression[i]))
         {
             postfix_expression[postfix_iterator++] = ' ';
-            if (is_empty(operator_stack) && infix_expression[i] == '(')
+
+            if (is_empty(operator_stack) && infix_expression[i] == ')')
                 return "X";
+
             else if (is_empty(operator_stack))
                 push(operator_stack, infix_expression[i]);
+
             else
             {
                 if (infix_expression[i] == '(')
@@ -93,6 +97,8 @@ char* to_postfix(char* infix_expression, int len)
 
                 else if (infix_expression[i] == ')')
                 {
+                    if (get(operator_stack) == '(')
+                        return "X";
                     symbol = (char)get_pop(operator_stack);
                     while (symbol != '(')
                     {
@@ -152,6 +158,7 @@ long int calculator(char* postfix_expression)
         {
             if (is_empty(calculator_stack))
                 return SYNTAX_ERROR;
+
             operand_2 = get_pop(calculator_stack);
             operand_1 = get_pop(calculator_stack);
             switch (postfix_expression[iterator])
@@ -191,6 +198,7 @@ int main() {
         puts("syntax error");
         return 0;
     }
+
     switch (calculator(postfix_expression))
     {
         case SYNTAX_ERROR:
