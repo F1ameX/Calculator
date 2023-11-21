@@ -118,12 +118,15 @@ long int calculator(char* postfix_expression)
                 case '+':
                     result = operand_1 + operand_2;
                     break;
+
                 case '-':
                     result = operand_1 - operand_2;
                     break;
+
                 case '*':
                     result = operand_1 * operand_2;
                     break;
+
                 case '/':
                     if (operand_2 == 0)
                         return DIV_BY_ZERO;

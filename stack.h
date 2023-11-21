@@ -1,6 +1,6 @@
+#pragma once
 #ifndef CALCULATOR_STACK_H
 #define CALCULATOR_STACK_H
-#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
