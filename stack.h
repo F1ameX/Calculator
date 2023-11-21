@@ -46,11 +46,11 @@ int is_empty(STACK* stack)
 
 void pop(STACK* stack)
 {
-    STACK* deleted = stack->next;
+    STACK* to_delete = stack->next;
     if (!is_empty(stack))
     {
-        stack->next = deleted->next;
-        free(deleted);
+        stack->next = to_delete->next;
+        free(to_delete);
     }
 }
 
