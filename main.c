@@ -70,6 +70,60 @@ char* get_string(int* len)
 }
 
 
+long int calculator(char* postfix_expression)
+{
+    int operand_1, operand_2, num, iterator = 0, result = 0;
+    STACK* calculator_stack = init();
+
+    while (iterator < strlen(postfix_expression))
+    {
+        while (postfix_expression[iterator] == ' ')
+            iterator++;
+
+        if (isdigit(postfix_expression[iterator]))
+        {
+            num = 0;
+            while (isdigit(postfix_expression[iterator]))
+            {
+                num = num * 10 + postfix_expression[iterator] - '0';
+                iterator++;
+            }
+            push(calculator_stack, num);
+        }
+        else
+        {
+            if (is_empty(calculator_stack) || stack_len(calculator_stack) == 1)
+                return SYNTAX_ERROR;
+
+            operand_2 = get_pop(calculator_stack);
+            operand_1 = get_pop(calculator_stack);
+            switch (postfix_expression[iterator])
+            {
+                case '+':
+                    result = operand_1 + operand_2;
+                    break;
+                case '-':
+                    result = operand_1 - operand_2;
+                    break;
+                case '*':
+                    result = operand_1 * operand_2;
+                    break;
+                case '/':
+                    if (operand_2 == 0)
+                        return DIV_BY_ZERO;
+                    else
+                        result = operand_1 / operand_2;
+                    break;
+            }
+            push(calculator_stack, result);
+            iterator++;
+        }
+    }
+    result = get(calculator_stack);
+    return result;
+}
+
+
 char* to_postfix(char* infix_expression, int len)
 {
     int postfix_iterator = 0, priority;
@@ -101,8 +155,9 @@ char* to_postfix(char* infix_expression, int len)
 
                 else if (infix_expression[i] == ')')
                 {
-                    if (get(operator_stack) == '(')
+                    if (i == 0 || infix_expression[i-1] == '(')
                         return "X";
+
                     symbol = (char)get_pop(operator_stack);
                     while (symbol != '(')
                     {
@@ -134,61 +189,13 @@ char* to_postfix(char* infix_expression, int len)
     while (!is_empty(operator_stack))
         postfix_expression[postfix_iterator++] = (char)get_pop(operator_stack);
 
+    while (postfix_iterator > 0 && postfix_expression[postfix_iterator - 1] == ' ')
+        postfix_iterator--;
+
     postfix_expression[postfix_iterator] = '\0';
     return postfix_expression;
 }
 
-
-long int calculator(char* postfix_expression)
-{
-    int operand_1, operand_2, num, iterator = 0, result = 0;
-    STACK* calculator_stack = init();
-
-    while (iterator < strlen(postfix_expression))
-    {
-        while (postfix_expression[iterator] == ' ')
-            iterator++;
-
-        if (isdigit(postfix_expression[iterator]))
-        {
-            num = 0;
-            while (isdigit(postfix_expression[iterator]))
-            {
-                num = num * 10 + postfix_expression[iterator] - '0';
-                iterator++;
-            }
-            push(calculator_stack, num);
-        }
-        else
-        {
-            if (is_empty(calculator_stack) || stack_len(calculator_stack) == 1)
-                return SYNTAX_ERROR;
-            operand_2 = get_pop(calculator_stack);
-            operand_1 = get_pop(calculator_stack);
-            switch (postfix_expression[iterator])
-            {
-                case '+':
-                    result = operand_1 + operand_2;
-                    break;
-                case '-':
-                    result = operand_1 - operand_2;
-                    break;
-                case '*':
-                    result = operand_1 * operand_2;
-                    break;
-                case '/':
-                    if (operand_2 == 0)
-                        return DIV_BY_ZERO;
-                    else
-                        result = operand_1 / operand_2;
-                    break;
-            }
-            push(calculator_stack, result);
-            iterator++;
-        }
-    }
-    return result;
-}
 
 
 int main()
