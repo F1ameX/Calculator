@@ -51,6 +51,10 @@ char* get_string(int* len)
     int capacity = 1;
     *len = 0;
     char* string = (char *)malloc(sizeof(char)), symbol = getchar();
+
+    if (symbol == '\n')
+        return "X";
+
     while (symbol != '\n')
     {
         string[(*len)++] = symbol;
@@ -125,6 +129,7 @@ char* to_postfix(char* infix_expression, int len)
         }
         else
             return "X";
+
     }
     while (!is_empty(operator_stack))
         postfix_expression[postfix_iterator++] = (char)get_pop(operator_stack);
@@ -136,7 +141,7 @@ char* to_postfix(char* infix_expression, int len)
 
 long int calculator(char* postfix_expression)
 {
-    int result, operand_1, operand_2, num, iterator = 0;
+    int operand_1, operand_2, num, iterator = 0, result = 0;
     STACK* calculator_stack = init();
 
     while (iterator < strlen(postfix_expression))
@@ -147,7 +152,7 @@ long int calculator(char* postfix_expression)
         if (isdigit(postfix_expression[iterator]))
         {
             num = 0;
-            while (postfix_expression[iterator] != ' ' && !is_operand(postfix_expression[iterator]))
+            while (isdigit(postfix_expression[iterator]))
             {
                 num = num * 10 + postfix_expression[iterator] - '0';
                 iterator++;
@@ -156,9 +161,8 @@ long int calculator(char* postfix_expression)
         }
         else
         {
-            if (is_empty(calculator_stack))
+            if (is_empty(calculator_stack) || stack_len(calculator_stack) == 1)
                 return SYNTAX_ERROR;
-
             operand_2 = get_pop(calculator_stack);
             operand_1 = get_pop(calculator_stack);
             switch (postfix_expression[iterator])
@@ -187,13 +191,14 @@ long int calculator(char* postfix_expression)
 }
 
 
-int main() {
+int main()
+{
     int len;
     char* expression, *postfix_expression;
     expression = get_string(&len);
     postfix_expression = to_postfix(expression, len);
 
-    if (postfix_expression[0] == 'X')
+    if (expression[0] == 'X' || postfix_expression[0] == 'X')
     {
         puts("syntax error");
         return 0;
