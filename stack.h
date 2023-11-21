@@ -71,6 +71,19 @@ int get_pop(STACK* stack)
 }
 
 
+int stack_len(STACK* stack)
+{
+    int len = 0;
+    STACK* current = stack;
+    while (current->next)
+    {
+        len++;
+        current = current->next;
+    }
+    return len;
+}
+
+
 void clear(STACK* stack)
 {
     while (stack->next)
